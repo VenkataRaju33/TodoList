@@ -1,35 +1,31 @@
-import React,{useState} from 'react';
+import React,{useState} from 'react'
 import TodoList from './TodoList';
-import "./App.css"
 
-function App() {
-  const [task,setTask]= useState("");
-  const[todos,setTodos]=useState([]);
-  const changeHandler= e=>{
-    setTask(e.target.value)
-  }
-  const submitHandler=e=>{
+const App = () => {
+  const [search,setSearch] = useState('');
+  const [data,setData] = useState([]);
+  const YOUR_APP_ID = "8aecf864";
+  const YOUR_APP_KEY ="b460ca299374805ea2ad4be4f6ea081a";
+  const submitHandler = e =>{
     e.preventDefault();
-    const newTodos=[...todos,task];
-    setTodos(newTodos);
-    setTask("")
-  }
-  const deleteHandler=(indexValue)=>{
-    const newTodos=todos.filter((todo,index)=>index!==indexValue);
-    setTodos(newTodos);
+    fetch(`https://api.edamam.com/search?q=${search}&app_id=${YOUR_APP_ID}&app_key=${YOUR_APP_KEY}&from=0&to=30&calories=591-722&health=alcohol-free`).then(
+      response => response.json()
+    ).then(
+      data => setData(data.hits)
+    )
   }
   return (
-    <div className="App">
+    <div>
       <center>
-      <h1>Todo Management Application</h1>
-      <form onSubmit={submitHandler}>
-        <input size="30" type="text" name="task" value={task} onChange={changeHandler}/> &nbsp;
-        <input type="submit"value="Add" name="Add"/> 
-      </form>
-      <TodoList todos={todos} deleteHandler={deleteHandler}/>
-    </center>
+        <h4>Food Recipe App</h4>
+        <form onSubmit={submitHandler}>
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}/> <br/>
+          <input type="submit" className="btn btn-primary" value="Search"/>
+        </form>
+        {data.length>=1 ? <TodoList  data={data}/>:null}
+      </center>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
